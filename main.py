@@ -22,7 +22,7 @@ class DuckTranslator(BoxLayout):
 
         self.load_assets()
         self.create_ui()
-        self.show_warning()
+        self.show_welcome_message()
 
         Clock.schedule_interval(self.imcrement_duck_count, 1)
 
@@ -76,5 +76,20 @@ class DuckTranslator(BoxLayout):
         )
         self.add_widget(self.duck_counter)
 
+    def show_welcome_message(self):
+        content = BoxLayout(orientation = 'vertical')
+        content.add_widget(Label(text = 'From this moment ducks will come to you every second.'))
+        content.add_widget(Label(text = 'Dont wait until 300 ducks...'))
 
+        popup = Popup(
+            title = 'Warning',
+            content = content,
+            size_hint = (0.8, 0.4),
+            auto_dismiss = False
+        )
+
+        btn = Button(text = 'OK', size_hint = 0.3)
+        btn.bind(on_press = popup.dismiss)
+        content.add_widget(btn)
+        popup.open()
 
