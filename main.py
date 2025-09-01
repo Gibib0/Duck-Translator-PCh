@@ -141,7 +141,7 @@ class DuckTranslator(BoxLayout):
             bold=True
         ))
         content.add_widget(Label(
-            text='Dont wait until 150 ducks...',
+            text='Dont wait until 200 ducks...',
             font_name = 'assets/fonts/comic.ttf',
             font_size='16sp',
             bold=True
