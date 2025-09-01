@@ -130,3 +130,40 @@ class DuckTranslator(BoxLayout):
         if self.sounds.get(sound_name):
             self.sounds[sound_name].play()
             self.current_sound = self.sounds[sound_name]
+
+    def praise_duck(self, instance):
+        self.play_sound('duck')
+
+        content = BoxLayout(orientation = 'vertical')
+        content.add_widget(Image(source = 'assets/images/rating_up.jpeg'))
+        content.add_widget(Lable(text = 'U made the right choice. The Great DUck accepted ur praise.'))
+
+        popup = Popup(
+            title = 'Praise the Great Duck',
+            content = content,
+            size_hint = (0.7, 0.7)
+        )
+
+        btn = Button(text = 'OK', size_hint = 0.2)
+        btn.bind(on_press = popup.dismiss)
+        content.add_widget(btn)
+
+        popup.bind(on_dismiss = self.show_duck_god)
+        popup.open()
+
+    def show_duck_god(self, instance = None):
+        content = BoxLayout(orientation = 'vertical')
+        content.add_widget(Image(source = 'assets/images/duck_god.jpeg'))
+        content.add_widget(Label(text = 'Now U have seen the God of Ducks'))
+
+        popup = Popup(
+            title = 'Duck God',
+            content = content,
+            size_hint = (0.8, 0.8)
+        )
+
+        btn = Button(text = 'OK' , size_hint = 0.2)
+        btn.bind(on_press = popup.dismiss)
+        content.add_widget(btn)
+
+        popup.open()
