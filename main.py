@@ -115,6 +115,22 @@ class DuckTranslator(BoxLayout):
         if self.duck_count == 300:
             self.show_screamer
 
+    def show_screamer(self):
+        self.play_sound('screamer')
+
+        content = Image(source = 'assets/images/screamer.jpeg')
+
+        popup = Popup(
+            title = '!!!',
+            content = content,
+            size_hint = (0.9, 0.9),
+            auto_dismiss = False
+        )
+
+        Clock.schedule_once(lambda dt: popup.dismiss(), 3)
+        popup.bind(on_dismiss = self.resume_background)
+        popup.open()
+
     def play_background_music(self):
         if self.sounds['background']:
             self.sounds['background'].loop = True
@@ -136,7 +152,7 @@ class DuckTranslator(BoxLayout):
 
         content = BoxLayout(orientation = 'vertical')
         content.add_widget(Image(source = 'assets/images/rating_up.jpeg'))
-        content.add_widget(Lable(text = 'U made the right choice. The Great DUck accepted ur praise.'))
+        content.add_widget(Label(text = 'U made the right choice. The Great DUck accepted ur praise.'))
 
         popup = Popup(
             title = 'Praise the Great Duck',
