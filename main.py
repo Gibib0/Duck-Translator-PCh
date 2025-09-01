@@ -40,5 +40,41 @@ class DuckTranslator(BoxLayout):
         for sound in self.sounds.values():
             if sound: sound.volume = 0.7
 
+    def create_ui(self):
+        input_layout = BoxLayout(size_hint=(1, 0.4))
+
+        self.input_text = TextInput(
+            hint_text = 'Enter human text here...',
+            size_hint = (0.5, 0.9),
+            multiline = True
+        )
+        self.input_text.bind(text=self.on_text_change)
+
+        self.output_text = TextInput(
+            hint_text = 'Duck translation...',
+            size_hint = (0.5, 0.9),
+            multiline = True,
+            readonly = True
+        )
+
+        input_layout.add_widget(self.input_text)
+        input_layout.add_widget(self.output_text)
+        self.add_widget(input_layout)
+
+        self.praise_button = Button(
+            text = 'Praise the Great Duck',
+            size_hint = (0.8, 0.8),
+            pos_hint = {'x':0, 'y':0}
+        )
+        self.praise_button.bind(on_press=self.praise_duck)
+        self.add_widget(self.praise_button)
+
+        self.duck_counter = Label(
+            text = 'Ducks arrived: 0',
+            size_hint = (0.3, 0.1),
+            pos_hint = {'right':1, 'y':0}
+        )
+        self.add_widget(self.duck_counter)
+
 
 
