@@ -9,8 +9,12 @@ from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.core.audio import SoundLoader
 from kivy.graphics import Color, Rectangle
+from kivy.properties import StringProperty
 import random
 import os
+
+class BackgroundLabel(Label):
+    pass
 
 class DuckTranslator(BoxLayout):
     def __init__(self, **kwargs):
@@ -19,17 +23,28 @@ class DuckTranslator(BoxLayout):
         self.duck_count = 0
         self.background_sound = None
         self.current_sound = None
+        self.sounds = {}
+
+        with self.canvas.before:
+            self.bg = Rectangle(source='assets/images/background.jpg', pos=self.pos, size=self.size)
+            self.bind(pos=self.update_bg, size=self.update_bg)
+
+
 
         self.load_assets()
         self.create_ui()
         self.show_welcome_message()
 
-        Clock.schedule_interval(self.imcrement_duck_count, 1)
+        Clock.schedule_interval(self.increment_duck_count, 1)
 
         self.play_background_music()
 
-    def load_assests(self):
-        self.sound = {
+    def update_bg(self, *args):
+        self.bg.pos = self.pos
+        self.bg.size = self.size
+
+    def load_assets(self):
+        self.sounds = {
             'background': SoundLoader.load('assets/sounds/background_sound.wav'),
             'duck': SoundLoader.load('assets/sounds/duck_sound.wav'),
             'iloveyou': SoundLoader.load('assets/sounds/ILoveU_sound.wav'),
@@ -41,54 +56,111 @@ class DuckTranslator(BoxLayout):
             if sound: sound.volume = 0.7
 
     def create_ui(self):
-        input_layout = BoxLayout(size_hint=(1, 0.4))
+        title_label = Label(
+            text = 'Duck Translator',
+            font_name = 'assets/fonts/comic.ttf',
+            font_size = '30sp',
+            bold = True,
+            size_hint = (1, 0.1),
+            color=(1, 0.8, 0.2, 1)
+        )
+        self.add_widget(title_label)
+
+        io_container = BoxLayout(
+            orientation = 'vertical',
+            size_hint = (1, 0.6),
+            pos_hint = {'center_x':0.5},
+            spacing = 10
+        )
 
         self.input_text = TextInput(
             hint_text = 'Enter human text here...',
-            size_hint = (0.5, 0.9),
-            multiline = True
+            size_hint = (1, 0.45),
+            multiline = True,
+            background_color = (1, 0.8, 0.8, 0.7),
+            foreground_color = (0, 0, 0, 1),
+            font_name = 'assets/fonts/comic.ttf',
+            font_size = '16sp',
+            padding = [10, 10]
         )
         self.input_text.bind(text=self.on_text_change)
+        io_container.add_widget(self.input_text)
 
         self.output_text = TextInput(
-            hint_text = 'Duck translation...',
-            size_hint = (0.5, 0.9),
-            multiline = True,
-            readonly = True
+            hint_text='Duck translation...',
+            size_hint=(1, 0.45),
+            multiline=True,
+            readonly=True,
+            background_color=(1, 0.8, 0.8, 0.7),
+            foreground_color=(0, 0, 0, 1),
+            font_name='assets/fonts/comic.ttf',
+            font_size='16sp',
+            padding=[10, 10]
+        )
+        io_container.add_widget(self.output_text)
+
+        self.add_widget(io_container)
+
+        bottom_container = BoxLayout(
+            size_hint = (1, 0.2),
+            pos_hint = {'center_x':0.5},
+            spacing = 20
         )
 
-        input_layout.add_widget(self.input_text)
-        input_layout.add_widget(self.output_text)
-        self.add_widget(input_layout)
-
         self.praise_button = Button(
-            text = 'Praise the Great Duck',
-            size_hint = (0.8, 0.8),
-            pos_hint = {'x':0, 'y':0}
+            text='Praise the Great Duck',
+            size_hint=(0.6, 0.8),
+            background_color=(0, 1, 0, 1),
+            color=(1, 1, 1, 1),
+            font_name='assets/fonts/comic.ttf',
+            font_size='18sp',
+            bold=True
         )
         self.praise_button.bind(on_press=self.praise_duck)
         self.add_widget(self.praise_button)
 
         self.duck_counter = Label(
-            text = 'Ducks arrived: 0',
-            size_hint = (0.3, 0.1),
-            pos_hint = {'right':1, 'y':0}
+            text=self.duck_count,
+            size_hint=(0.4, 0.8),
+            color=(1, 1, 1, 1),
+            font_name='assets/fonts/comic.ttf',
+            font_size='18sp',
+            bold=True
         )
-        self.add_widget(self.duck_counter)
+        bottom_container.add_widget(self.duck_counter)
+
+        self.add_widget(bottom_container)
 
     def show_welcome_message(self):
-        content = BoxLayout(orientation = 'vertical')
-        content.add_widget(Label(text = 'From this moment ducks will come to you every second.'))
-        content.add_widget(Label(text = 'Dont wait until 300 ducks...'))
+        content = BoxLayout(orientation = 'vertical', spacing = 10)
+        content.add_widget(Label(
+            text='From this moment ducks will come to you every second.',
+            font_name='assets/fonts/comic.ttf',
+            font_size='16sp',
+            bold=True
+        ))
+        content.add_widget(Label(
+            text='Dont wait until 300 ducks...',
+            font_name = 'Comic Sans MS',
+            font_size='16sp',
+            bold=True
+        ))
 
         popup = Popup(
             title = 'Warning',
+            title_font='Comic Sans MS',
             content = content,
             size_hint = (0.8, 0.4),
             auto_dismiss = False
         )
 
-        btn = Button(text = 'OK', size_hint_y = 0.3)
+        btn = Button(
+            text='OK',
+            size_hint_y=0.3,
+            background_color=(0, 0.7, 0, 1),
+            font_name='Comic Sans MS',
+            bold=True
+        )
         btn.bind(on_press = popup.dismiss)
         content.add_widget(btn)
         popup.open()
@@ -102,6 +174,7 @@ class DuckTranslator(BoxLayout):
 
     def translate_text(self, text):
         if not text:
+            self.output_text.text = ""
             return
 
         duck_words = ['Quack', 'quack-quack', 'HONK', 'honk-honk', 'quackle!', '(flap)', '(flap-flap)', '(puddle)', 'Quackly~ quackly~']
@@ -113,7 +186,7 @@ class DuckTranslator(BoxLayout):
         self.duck_counter.text = f'Ducks arrived: {self.duck_count}'
 
         if self.duck_count == 300:
-            self.show_screamer
+            self.show_screamer()
 
     def show_screamer(self):
         self.play_sound('screamer')
@@ -132,7 +205,7 @@ class DuckTranslator(BoxLayout):
         popup.open()
 
     def play_background_music(self):
-        if self.sounds['background']:
+        if self.sounds.get('background'):
             self.sounds['background'].loop = True
             self.sounds['background'].play()
             self.current_sound = self.sounds['background']
@@ -147,20 +220,35 @@ class DuckTranslator(BoxLayout):
             self.sounds[sound_name].play()
             self.current_sound = self.sounds[sound_name]
 
+    def resume_background(self, instance = None):
+        self.play_background_music()
+
     def praise_duck(self, instance):
         self.play_sound('duck')
 
         content = BoxLayout(orientation = 'vertical')
         content.add_widget(Image(source = 'assets/images/rating_up.jpeg'))
-        content.add_widget(Label(text = 'U made the right choice. The Great DUck accepted ur praise.'))
+        content.add_widget(Label(
+            text='U made the right choice. The Great Duck accepted ur praise.',
+            font_name='assets/fonts/comic.ttf',
+            font_size='16sp',
+            bold=True
+        ))
 
         popup = Popup(
-            title = 'Praise the Great Duck',
-            content = content,
-            size_hint = (0.7, 0.7)
+            title='Praise the Great Duck',
+            title_font='assets/fonts/comic.ttf',
+            content=content,
+            size_hint=(0.7, 0.7)
         )
 
-        btn = Button(text = 'OK', size_hint_y = 0.2)
+        btn = Button(
+            text='OK',
+            size_hint_y=0.2,
+            background_color=(0, 0.7, 0, 1),
+            font_name='assets/fonts/comic.ttf',
+            bold=True
+        )
         btn.bind(on_press = popup.dismiss)
         content.add_widget(btn)
 
@@ -170,15 +258,26 @@ class DuckTranslator(BoxLayout):
     def show_duck_god(self, instance = None):
         content = BoxLayout(orientation = 'vertical')
         content.add_widget(Image(source = 'assets/images/duck_god.jpeg'))
-        content.add_widget(Label(text = 'Now U have seen the God of Ducks'))
-
+        content.add_widget(Label(
+            text='Now U have seen the God of Ducks',
+            font_name='assets/fonts/comic.ttf',
+            font_size='16sp',
+            bold=True
+        ))
         popup = Popup(
-            title = 'Duck God',
-            content = content,
-            size_hint = (0.8, 0.8)
+            title='Duck God',
+            title_font='assets/fonts/comic.ttf',
+            content=content,
+            size_hint=(0.8, 0.8)
         )
 
-        btn = Button(text = 'OK' , size_hint_y = 0.2)
+        btn = Button(
+            text='OK',
+            size_hint_y=0.2,
+            background_color=(0, 0.7, 0, 1),
+            font_name='assets/fonts/comic.ttf',
+            bold=True
+        )
         btn.bind(on_press = popup.dismiss)
         content.add_widget(btn)
 
@@ -192,11 +291,18 @@ class DuckTranslator(BoxLayout):
 
         popup = Popup(
             title = 'Love',
+            title_font='assets/fonts/comic.ttf',
             content = content,
             size_hint = (0.7, 0.7)
         )
 
-        btn = Button(Text = 'OK', size_hint_y = 0.2)
+        btn = Button(
+            text='OK',
+            size_hint_y=0.2,
+            background_color=(0, 0.7, 0, 1),
+            font_name='assets/fonts/comic.ttf',
+            bold=True
+        )
         btn.bind(on_press = popup.dismiss)
         content.add_widget(btn)
 
@@ -205,6 +311,28 @@ class DuckTranslator(BoxLayout):
 
     def show_cute_message(self, instance = None):
         content = Label(
-            text = 'And I love you /ᐠ｡ꞈ｡ᐟ\❤️～',
-            size_hint = (0.6, 0.4)
+            text='And I love you /ᐠ｡ꞈ｡ᐟ\❤️～',
+            font_name='assets/fonts/comic.ttf',
+            font_size='20sp',
+            bold=True,
+            size_hint=(0.6, 0.4)
         )
+
+        popup = Popup(
+            title='❤️',
+            title_font='assets/fonts/comic.ttf',
+            content=content,
+            size_hint=(0.5, 0.3)
+        )
+
+        Clock.schedule_once(lambda dt: popup.dismiss(), 3)
+        popup.open()
+
+class DuckTranslatorApp(App):
+    def build(self):
+        self.title = 'Duck Translator'
+        Window.set_icon('assets/icons/icon.ico')
+        return DuckTranslator()
+
+if __name__ == '__main__':
+    DuckTranslatorApp().run()
