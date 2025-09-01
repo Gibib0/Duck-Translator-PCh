@@ -16,7 +16,7 @@ class DuckTranslator(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.orientation = 'vertical'
-        self.duck_counter = 0
+        self.duck_count = 0
         self.background_sound = None
         self.current_sound = None
 
@@ -92,4 +92,19 @@ class DuckTranslator(BoxLayout):
         btn.bind(on_press = popup.dismiss)
         content.add_widget(btn)
         popup.open()
+
+    def on_text_change(self, instance, value):
+        if any (phrase in value.lower() for phrase in ['я люблю тебя', 'люблю тебя', 'я тебя люблю']):
+            self.show_love_message()
+            return
+
+        self.translate_text(value)
+
+    def translate_text(self, text):
+        if not text:
+            return
+
+        duck_words = ['Quack', 'quack-quack', 'HONK', 'honk-honk', 'quackle!', '(flap)', '(flap-flap)', '(puddle)', 'Quackly~ quackly~']
+        translated = ' '.join([random.choice(duck_words) for _ in text.split()])
+        self.output_text.text = translated
 
