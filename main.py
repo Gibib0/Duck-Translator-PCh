@@ -8,10 +8,8 @@ from kivy.uix.popup import Popup
 from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.core.audio import SoundLoader
-from kivy.graphics import Color, Rectangle
-from kivy.properties import StringProperty
+from kivy.graphics import Rectangle
 import random
-import os
 
 class BackgroundLabel(Label):
     pass
@@ -143,7 +141,7 @@ class DuckTranslator(BoxLayout):
             bold=True
         ))
         content.add_widget(Label(
-            text='Dont wait until 300 ducks...',
+            text='Dont wait until 150 ducks...',
             font_name = 'assets/fonts/comic.ttf',
             font_size='16sp',
             bold=True
@@ -188,7 +186,7 @@ class DuckTranslator(BoxLayout):
         self.duck_count += 1
         self.duck_counter.text = f'Ducks arrived: {self.duck_count}'
 
-        if self.duck_count == 300:
+        if self.duck_count == 152:
             self.show_screamer()
 
     def show_screamer(self):
