@@ -108,3 +108,25 @@ class DuckTranslator(BoxLayout):
         translated = ' '.join([random.choice(duck_words) for _ in text.split()])
         self.output_text.text = translated
 
+    def increment_duck_count(self, dt):
+        self.duck_count += 1
+        self.duck_counter.text = f'Ducks arrived: {self.duck_count}'
+
+        if self.duck_count == 300:
+            self.show_screamer
+
+    def play_background_music(self):
+        if self.sounds['background']:
+            self.sounds['background'].loop = True
+            self.sounds['background'].play()
+            self.current_sound = self.sounds['background']
+
+    def stop_current_sound(self):
+        if self.current_sound:
+            self.current_sound.stop()
+
+    def play_sound(self, sound_name):
+        self.stop_current_sound()
+        if self.sounds.get(sound_name):
+            self.sounds[sound_name].play()
+            self.current_sound = self.sounds[sound_name]
