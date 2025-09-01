@@ -88,7 +88,7 @@ class DuckTranslator(BoxLayout):
             auto_dismiss = False
         )
 
-        btn = Button(text = 'OK', size_hint = 0.3)
+        btn = Button(text = 'OK', size_hint_y = 0.3)
         btn.bind(on_press = popup.dismiss)
         content.add_widget(btn)
         popup.open()
@@ -160,7 +160,7 @@ class DuckTranslator(BoxLayout):
             size_hint = (0.7, 0.7)
         )
 
-        btn = Button(text = 'OK', size_hint = 0.2)
+        btn = Button(text = 'OK', size_hint_y = 0.2)
         btn.bind(on_press = popup.dismiss)
         content.add_widget(btn)
 
@@ -178,8 +178,33 @@ class DuckTranslator(BoxLayout):
             size_hint = (0.8, 0.8)
         )
 
-        btn = Button(text = 'OK' , size_hint = 0.2)
+        btn = Button(text = 'OK' , size_hint_y = 0.2)
         btn.bind(on_press = popup.dismiss)
         content.add_widget(btn)
 
         popup.open()
+
+    def show_love_message(self):
+        self.play_sound('iloveyou')
+
+        content  =BoxLayout(orientation = 'vertical')
+        content.add_widget(Image(source = 'assets/images/romantic.jpg'))
+
+        popup = Popup(
+            title = 'Love',
+            content = content,
+            size_hint = (0.7, 0.7)
+        )
+
+        btn = Button(Text = 'OK', size_hint_y = 0.2)
+        btn.bind(on_press = popup.dismiss)
+        content.add_widget(btn)
+
+        popup.bind(on_dismiss = self.show_cute_message)
+        popup.open()
+
+    def show_cute_message(self, instance = None):
+        content = Label(
+            text = 'And I love you /ᐠ｡ꞈ｡ᐟ\❤️～',
+            size_hint = (0.6, 0.4)
+        )
